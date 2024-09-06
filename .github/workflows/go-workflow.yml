@@ -49,7 +49,7 @@ jobs:
 
       - name: Copy Docker image to remote server
         run: |
-        sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
+          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
 
       - name: Remove local tar file
         run: rm ${{ env.APP_NAME }}.tar
@@ -101,7 +101,7 @@ jobs:
 
       - name: Copy Docker image to remote server
         run: |
-        sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
+          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
 
       - name: Remove local tar file
         run: rm ${{ env.APP_NAME }}.tar
