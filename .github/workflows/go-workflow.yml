@@ -113,7 +113,7 @@ jobs:
             docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker load < /home/longplan/backend/develop/${{ env.APP_NAME }}.tar
             rm /home/longplan/backend/develop/${{ env.APP_NAME }}.tar
-            docker run -d -p 5000:5000 -v /home/longplan/backend/develop/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+            docker run -d -p 8000:8000 -v /home/longplan/backend/develop/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
           EOF
 
     env:

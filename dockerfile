@@ -22,6 +22,8 @@ ENV mode prod
 # Set the timezone to Asia/Bangkok
 RUN apk update && apk add --no-cache tzdata && cp /usr/share/zoneinfo/Asia/Bangkok /etc/localtime && echo "Asia/Bangkok" > /etc/timezone
 
+RUN mkdir /config
+
 # Copy the built binary from the previous stage
 COPY --from=builder /app/backend /usr/local/bin/backend
 
