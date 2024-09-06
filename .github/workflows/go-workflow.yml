@@ -28,7 +28,7 @@ jobs:
         run: go vet -v ./...
 
       - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+        run: apt-get install -y sshpass
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -80,7 +80,7 @@ jobs:
         run: go vet -v ./...
 
       - name: Install sshpass
-        run: sudo apt-get install -y sshpass
+        run: apt-get install -y sshpass
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
