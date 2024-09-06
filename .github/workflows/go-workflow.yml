@@ -27,9 +27,6 @@ jobs:
       - name: Static analysis
         run: go vet -v ./...
 
-      - name: Install sshpass
-        run: apt-get install -y sshpass
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -78,9 +75,6 @@ jobs:
 
       - name: Static analysis
         run: go vet -v ./...
-
-      - name: Install sshpass
-        run: apt-get install -y sshpass
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
