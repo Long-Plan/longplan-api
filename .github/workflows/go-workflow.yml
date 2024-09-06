@@ -16,7 +16,7 @@ on:
 
 jobs:
   build-deploy-main:
-    if: github.head_ref == 'main'
+    if: github.ref == 'refs/heads/main'
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
@@ -73,7 +73,7 @@ jobs:
       APP_NAME: longplan-api
 
   build-deploy-develop:
-    if: github.head_ref == 'develop'
+    if: github.ref == 'refs/heads/develop'
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
