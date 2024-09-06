@@ -39,18 +39,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List files in current directory
+        run: ls -la
+
+      - name: Test SSH connection
+        run: |
+          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} echo "SSH connection successful"
+
+      - name: Debug Remote SSH
+        run: |
+          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "ls -la /home/longplan/backend/develop/"
+
       - name: Copy Repository to remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no -r . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/dev/
+          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -v -o StrictHostKeyChecking=no -r . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
 
       - name: Deploy Docker image on remote server
         run: |
           sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             docker rm $$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
-            docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/dev/
-            docker run -d -p 8000:8000 -v /home/longplan/backend/dev/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
-            rm -rf /home/longplan/backend/dev/
+            docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/develop/
+            docker run -d -p 8000:8000 -v /home/longplan/backend/develop/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+            rm -rf /home/longplan/backend/develop/
           EOF
 
     env:
