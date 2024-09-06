@@ -32,6 +32,9 @@ jobs:
       - name: Static analysis
         run: go vet -v ./...
 
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -45,29 +48,21 @@ jobs:
         run: docker rmi ${{ env.APP_NAME }}
 
       - name: Copy Docker image to remote server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          password: ${{ secrets.REMOTE_PASSWORD }}
-          source: ${{ env.APP_NAME }}.tar
-          target: /home/longplan/backend/main/
+        run: |
+        sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
 
       - name: Remove local tar file
         run: rm ${{ env.APP_NAME }}.tar
 
       - name: Deploy Docker image on remote server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          password: ${{ secrets.REMOTE_PASSWORD }}
-          script: |
+        run: |
+          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             docker rm $$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker load < /home/longplan/backend/main/${{ env.APP_NAME }}.tar
             rm /home/longplan/backend/main/${{ env.APP_NAME }}.tar
             docker run -d -p 5000:5000 -v /home/longplan/backend/main/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+          EOF
 
     env:
       APP_NAME: longplan-api
@@ -89,6 +84,9 @@ jobs:
       - name: Static analysis
         run: go vet -v ./...
 
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -102,29 +100,21 @@ jobs:
         run: docker rmi ${{ env.APP_NAME }}
 
       - name: Copy Docker image to remote server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          password: ${{ secrets.REMOTE_PASSWORD }}
-          source: ${{ env.APP_NAME }}.tar
-          target: /home/longplan/backend/develop/
+        run: |
+        sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
 
       - name: Remove local tar file
         run: rm ${{ env.APP_NAME }}.tar
 
       - name: Deploy Docker image on remote server
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          password: ${{ secrets.REMOTE_PASSWORD }}
-          script: |
+        run: |
+          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             docker rm $$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker load < /home/longplan/backend/develop/${{ env.APP_NAME }}.tar
             rm /home/longplan/backend/develop/${{ env.APP_NAME }}.tar
             docker run -d -p 5000:5000 -v /home/longplan/backend/develop/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+          EOF
 
     env:
       APP_NAME: longplan-api-dev
