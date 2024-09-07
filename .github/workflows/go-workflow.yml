@@ -16,13 +16,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: Copy Repository to remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no -r . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
+          scp -o StrictHostKeyChecking=no -r . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
 
       - name: Deploy Docker image on remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             docker rm $$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/main/
@@ -39,24 +43,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: List files in current directory
-        run: ls -la
-
-      - name: Test SSH connection
-        run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} echo "SSH connection successful"
-
-      - name: Debug Remote SSH
-        run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} "ls -la /home/longplan/backend/develop/"
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Copy Repository to remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -v -o StrictHostKeyChecking=no -r . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
+          scp -o StrictHostKeyChecking=no -r . ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
 
       - name: Deploy Docker image on remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             docker rm $$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/develop/
