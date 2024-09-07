@@ -31,11 +31,11 @@ jobs:
             docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/main/
             docker run -d -p 5000:5000 -v /home/longplan/backend/main/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
-            rm -rf /home/longplan/backend/main/
+            rm -rf /home/longplan/backend/main/*
           EOF
 
     env:
-      APP_NAME: longplan-api
+      APP_NAME: prod-longplan-api
 
   build-deploy-develop:
     if: github.ref == 'refs/heads/develop'
@@ -54,12 +54,13 @@ jobs:
       - name: Deploy Docker image on remote server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
+            
             docker rm \$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/develop/
             docker run -d -p 8000:8000 -v /home/longplan/backend/develop/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
-            rm -rf /home/longplan/backend/develop/
+            rm -rf /home/longplan/backend/develop/*
           EOF
 
     env:
-      APP_NAME: longplan-api-dev
+      APP_NAME: dev-longplan-api
