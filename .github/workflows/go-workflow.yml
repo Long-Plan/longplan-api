@@ -22,7 +22,7 @@ jobs:
 
       - name: Copy Repository to remote server
         run: |
-          scp -o StrictHostKeyChecking=no -r ./ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
+          scp -o StrictHostKeyChecking=no -r * ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
 
       - name: Deploy Docker image on remote server
         run: |
@@ -49,7 +49,7 @@ jobs:
 
       - name: Copy Repository to remote server
         run: |
-          scp -o StrictHostKeyChecking=no -r ./ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
+          scp -o StrictHostKeyChecking=no -r * ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
 
       - name: Deploy Docker image on remote server
         run: |
