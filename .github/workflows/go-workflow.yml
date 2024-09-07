@@ -35,7 +35,7 @@ jobs:
           EOF
 
     env:
-      APP_NAME: longplan-api
+      APP_NAME: prod-longplan-api
 
   build-deploy-develop:
     if: github.ref == 'refs/heads/develop'
@@ -62,4 +62,4 @@ jobs:
           EOF
 
     env:
-      APP_NAME: longplan-api-dev
+      APP_NAME: dev-longplan-api
