@@ -9,11 +9,6 @@ on:
       - main
       - develop
 
-  pull_request:
-    branches:
-      - main
-      - develop
-
 jobs:
   build-deploy-main:
     if: github.ref == 'refs/heads/main'
@@ -21,47 +16,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - uses: webfactory/ssh-agent@v0.9.0
         with:
-          go-version: "1.23"
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Test
-        run: go test -v ./...
-
-      - name: Static analysis
-        run: go vet -v ./...
-
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image
-        run: docker build --platform linux/amd64 -t ${{ env.APP_NAME }} .
-
-      - name: Save Docker image to tar file
-        run: docker save ${{ env.APP_NAME }} > ${{ env.APP_NAME }}.tar
-
-      - name: Remove local Docker image
-        run: docker rmi ${{ env.APP_NAME }}
-
-      - name: Copy Docker image to remote server
+      - name: Copy Repository to remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
-
-      - name: Remove local tar file
-        run: rm ${{ env.APP_NAME }}.tar
+          scp -o StrictHostKeyChecking=no -r * ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/main/
 
       - name: Deploy Docker image on remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
-            docker rm $$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
-            docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
-            docker load < /home/longplan/backend/main/${{ env.APP_NAME }}.tar
-            rm /home/longplan/backend/main/${{ env.APP_NAME }}.tar
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
+            docker rm \$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
+            docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
+            docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/main/
             docker run -d -p 5000:5000 -v /home/longplan/backend/main/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+            rm -rf /home/longplan/backend/main/
           EOF
 
     env:
@@ -73,47 +43,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Go
-        uses: actions/setup-go@v4
+      - uses: webfactory/ssh-agent@v0.9.0
         with:
-          go-version: "1.23"
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Test
-        run: go test -v ./...
-
-      - name: Static analysis
-        run: go vet -v ./...
-
-      - name: Install sshpass
-        run: sudo apt-get install -y sshpass
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image
-        run: docker build --platform linux/amd64 -t ${{ env.APP_NAME }} .
-
-      - name: Save Docker image to tar file
-        run: docker save ${{ env.APP_NAME }} > ${{ env.APP_NAME }}.tar
-
-      - name: Remove local Docker image
-        run: docker rmi ${{ env.APP_NAME }}
-
-      - name: Copy Docker image to remote server
+      - name: Copy Repository to remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} scp -o StrictHostKeyChecking=no ${{ env.APP_NAME }}.tar ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
-
-      - name: Remove local tar file
-        run: rm ${{ env.APP_NAME }}.tar
+          scp -o StrictHostKeyChecking=no -r * ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/home/longplan/backend/develop/
 
       - name: Deploy Docker image on remote server
         run: |
-          sshpass -p ${{ secrets.REMOTE_PASSWORD }} ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
-            docker rm $$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
-            docker rmi $$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
-            docker load < /home/longplan/backend/develop/${{ env.APP_NAME }}.tar
-            rm /home/longplan/backend/develop/${{ env.APP_NAME }}.tar
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << EOF
+            docker rm \$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
+            docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
+            docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/develop/
             docker run -d -p 8000:8000 -v /home/longplan/backend/develop/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+            rm -rf /home/longplan/backend/develop/
           EOF
 
     env:
