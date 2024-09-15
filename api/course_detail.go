@@ -17,4 +17,5 @@ func bindCourseDetailRouter(router fiber.Router) {
 	handler := handler.NewCourseDetailHandler(service)
 
 	courseDetail.Get("", handler.GetAll)
+	courseDetail.Get(":courseNo", handler.GetByCourseNo)
 }

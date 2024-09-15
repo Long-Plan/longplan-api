@@ -24,3 +24,13 @@ func (h *courseDetailHandler) GetAll(c *fiber.Ctx) error {
 
 	return lodash.ResponseOK(c, courseDetails)
 }
+
+func (h *courseDetailHandler) GetByCourseNo(c *fiber.Ctx) error {
+	courseNo := c.Params("courseNo")
+	courseDetail, err := h.serv.GetByCourseNo(courseNo)
+	if err != nil {
+		return lodash.ResponseError(c, err)
+	}
+
+	return lodash.ResponseOK(c, courseDetail)
+}
