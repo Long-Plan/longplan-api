@@ -38,7 +38,7 @@ type CategoryCourse struct {
 	ID       int     `json:"id"`
 	CourseNo *string `json:"course_no,omitempty"`
 	Semester *int    `json:"semester,omitempty"`
-	Years    *int    `json:"years,omitempty"`
+	Year     *int    `json:"years,omitempty"`
 
 	Requisites []CategoryCourseRequisite `json:"requisites"`
 }
