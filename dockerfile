@@ -17,8 +17,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o backend .
 
 FROM alpine:latest
 
-ENV mode prod
-
 # Set the timezone to Asia/Bangkok
 RUN apk update && apk add --no-cache tzdata && cp /usr/share/zoneinfo/Asia/Bangkok /etc/localtime && echo "Asia/Bangkok" > /etc/timezone
 
