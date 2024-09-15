@@ -31,7 +31,7 @@ jobs:
             docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/main/
             docker run -d -p 5000:5000 -v /home/longplan/backend/main/config:/config -e mode='prod' --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
-            find /home/longplan/backend/main/* -mindepth 1 -path /home/longplan/backend/main/config -prune -o -exec rm -rf {} +
+            find /home/longplan/backend/main/ -mindepth 1 -not -path "/home/longplan/backend/main/config*" -delete
           EOF
 
     env:
@@ -59,7 +59,7 @@ jobs:
             docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/develop/
             docker run -d -p 8000:8000 -v /home/longplan/backend/develop/config:/config -e mode='dev' --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
-            find /home/longplan/backend/develop/* -mindepth 1 -path /home/longplan/backend/develop/config -prune -o -exec rm -rf {} +
+            find /home/longplan/backend/develop/ -mindepth 1 -not -path "/home/longplan/backend/develop/config*" -delete
           EOF
 
     env:
