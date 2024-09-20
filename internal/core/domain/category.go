@@ -10,7 +10,7 @@ type CategoryService interface {
 	CreateType(types model.SysCategoryType) error
 	UpdateType(types model.SysCategoryType) error
 	DeleteType(typeID int) error
-	GetByCurriculumID(curriculumID int) ([]dto.Category, error)
+	GetByCurriculumID(curriculumID int) (*dto.Category, error)
 	Create(category dto.Category) error
 	Update(category dto.Category) error
 	Delete(categoryID int) error

@@ -21,12 +21,12 @@ func (h *categoryHandler) GetByCurriculumID(c *fiber.Ctx) error {
 		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
 	}
 
-	categories, err := h.categoryService.GetByCurriculumID(curriculumID)
+	category, err := h.categoryService.GetByCurriculumID(curriculumID)
 	if err != nil {
 		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 	}
 
-	return lodash.ResponseOK(c, categories)
+	return lodash.ResponseOK(c, category)
 }
 
 func (h *categoryHandler) GetTypes(c *fiber.Ctx) error {

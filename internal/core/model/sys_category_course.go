@@ -8,6 +8,7 @@ type SysCategoryCourse struct {
 	CourseNo   *string   `gorm:"column:course_no;type:varchar(6)" json:"course_no,omitempty"`
 	Semester   *int      `gorm:"column:semester;type:int" json:"semester,omitempty"`
 	Year       *int      `gorm:"column:year;type:int" json:"year,omitempty"`
+	Credit     int       `gorm:"column:credit;type:int;default:0;not null" json:"credit"`
 	CreatedAt  time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 

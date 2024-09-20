@@ -3,6 +3,7 @@ package repo
 import (
 	"github.com/Long-Plan/longplan-api/internal/core/model"
 	"github.com/Long-Plan/longplan-api/internal/core/port"
+	"github.com/Long-Plan/longplan-api/pkg/scraping"
 	"gorm.io/gorm"
 )
 
@@ -24,9 +25,23 @@ func (r *sysCourseDetailRepo) GetAll() ([]model.SysCourseDetail, error) {
 
 func (r *sysCourseDetailRepo) GetByCourseNo(courseNo string) (*model.SysCourseDetail, error) {
 	var courseDetail model.SysCourseDetail
-	if err := r.db.Where("course_no = ?", courseNo).First(&courseDetail).Error; err != nil {
-		return nil, err
-	}
+	r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("course_no = ?", courseNo).First(&courseDetail).Error; err != nil {
+			if err == gorm.ErrRecordNotFound {
+				courseDetail, err := scraping.ScrapeCourseDetail(courseNo)
+				if err != nil {
+					return err
+				}
+				if err := tx.Create(courseDetail).Error; err != nil {
+					return err
+				}
+				return nil
+			}
+			return err
+		}
+		return nil
+	})
+
 	return &courseDetail, nil
 }
 

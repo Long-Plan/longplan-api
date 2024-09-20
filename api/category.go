@@ -18,6 +18,7 @@ func bindCategoryRouter(router fiber.Router) {
 	categoryRelationshipRepo := repo.NewSysCategoryRelationshipRepo(infrastructure.DB)
 	categoryCourseRepo := repo.NewSysCategoryCourseRepo(infrastructure.DB)
 	categoryCourseRequisiteRepo := repo.NewSysCategoryCourseRequisiteRepo(infrastructure.DB)
+	courseDetailRepo := repo.NewSysCourseDetailRepo(infrastructure.DB)
 	categoryService := service.NewCategoryService(
 		categoryRepo,
 		categoryTypeRepo,
@@ -25,6 +26,7 @@ func bindCategoryRouter(router fiber.Router) {
 		categoryRelationshipRepo,
 		categoryCourseRepo,
 		categoryCourseRequisiteRepo,
+		courseDetailRepo,
 	)
 	handler := handler.NewCategoryHandler(categoryService)
 
