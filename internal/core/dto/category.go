@@ -10,7 +10,7 @@ type Category struct {
 	ID        int       `json:"id"`
 	NameTH    string    `json:"name_th"`
 	NameEN    string    `json:"name_en"`
-	AtLeast   int       `json:"at_least"`
+	AtLeast   bool      `json:"at_least"`
 	Credit    int       `json:"credit"`
 	TypeID    int       `json:"type_id"`
 	Note      string    `json:"note"`
