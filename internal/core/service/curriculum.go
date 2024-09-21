@@ -154,7 +154,6 @@ func (s *curriculumService) GetCoursesByCurriculumID(curriculumID int) ([]dto.Ca
 			}
 			categoryCourses[i].Detail = *courseDetail
 		}
-		categoryCourses[i].Credit = sysCategoryCourses[i].Credit
 	}
 
 	return categoryCourses, nil
