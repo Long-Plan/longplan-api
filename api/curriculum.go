@@ -15,9 +15,12 @@ func bindCurriculumRouter(router fiber.Router) {
 	curriculumRepo := repo.NewSysCurriculumRepo(infrastructure.DB)
 	curriculumQuestionRepo := repo.NewSysCurriculumQuestionRepo(infrastructure.DB)
 	curriculumQuestionChoiceRepo := repo.NewSysCurriculumQuestionChoiceRepo(infrastructure.DB)
-	curriculumService := service.NewCurriculumService(curriculumRepo, curriculumQuestionRepo, curriculumQuestionChoiceRepo)
+	categoryCourseRepo := repo.NewSysCategoryCourseRepo(infrastructure.DB)
+	courseDetailRepo := repo.NewSysCourseDetailRepo(infrastructure.DB)
+	curriculumService := service.NewCurriculumService(curriculumRepo, curriculumQuestionRepo, curriculumQuestionChoiceRepo, categoryCourseRepo, courseDetailRepo)
 	curriculumHandler := handler.NewCurriculumHandler(curriculumService)
 	curriculum.Get("", curriculumHandler.All)
 	curriculum.Get("/major/:majorId", curriculumHandler.AllByMajorID)
 	curriculum.Get("/:curriculumId", curriculumHandler.GetByID)
+	curriculum.Get("/courses/:curriculumId", curriculumHandler.GetCoursesByCurriculumID)
 }

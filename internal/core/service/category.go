@@ -65,23 +65,20 @@ func (s *categoryService) getCategoryHelper(startCate model.SysCategory, cates [
 		return nil, err
 	}
 
-	requirements, err := mapper.MapSlice[model.SysCategoryRequirement, dto.CategoryRequirement](startCate.Requirements)
+	category.Requirements, err = mapper.MapSlice[model.SysCategoryRequirement, dto.CategoryRequirement](startCate.Requirements)
 	if err != nil {
 		return nil, err
 	}
-	category.Requirements = requirements
 
-	relationships, err := mapper.MapSlice[model.SysCategoryRelationship, dto.CategoryRelationship](startCate.Relationships)
+	category.Relationships, err = mapper.MapSlice[model.SysCategoryRelationship, dto.CategoryRelationship](startCate.Relationships)
 	if err != nil {
 		return nil, err
 	}
-	category.Relationships = relationships
 
 	childCategories := lo.Filter(cates, func(cate model.SysCategory, _ int) bool {
-		_, ok := lo.Find(relationships, func(relationship dto.CategoryRelationship) bool {
+		return lo.ContainsBy(category.Relationships, func(relationship dto.CategoryRelationship) bool {
 			return relationship.ChildCategoryID == cate.ID
 		})
-		return ok
 	})
 
 	for _, childCate := range childCategories {
@@ -92,29 +89,10 @@ func (s *categoryService) getCategoryHelper(startCate model.SysCategory, cates [
 		category.ChildCategories = append(category.ChildCategories, *childCategory)
 	}
 
-	courses, err := mapper.MapSlice[model.SysCategoryCourse, dto.CategoryCourse](startCate.Courses)
-	if err != nil {
-		return nil, err
+	for _, course := range startCate.Courses {
+		category.Courses = append(category.Courses, *course.CourseNo)
 	}
 
-	for i, course := range courses {
-		requisites, err := mapper.MapSlice[model.SysCategoryCourseRequisite, dto.CategoryCourseRequisite](startCate.Courses[i].Requisites)
-		if err != nil {
-			return nil, err
-		}
-		course.Requisites = requisites
-
-		courseDetail, err := s.courseDetailRepo.GetByCourseNo(*course.CourseNo)
-		if err != nil {
-			return nil, err
-		}
-		course.Detail = *courseDetail
-		course.Credit = courseDetail.Credit
-
-		courses[i] = course
-	}
-
-	category.Courses = courses
 	return category, nil
 }
 
@@ -132,12 +110,7 @@ func (s *categoryService) GetByCurriculumID(curriculumID int) (*dto.Category, er
 		return nil, nil
 	}
 
-	category, err := s.getCategoryHelper(totalCategory, sysCategories)
-	if err != nil {
-		return nil, err
-	}
-
-	return category, nil
+	return s.getCategoryHelper(totalCategory, sysCategories)
 }
 
 func (s *categoryService) Create(category dto.Category) error {

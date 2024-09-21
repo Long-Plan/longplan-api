@@ -20,7 +20,7 @@ type Category struct {
 	Requirements    []CategoryRequirement  `json:"requirements"`
 	Relationships   []CategoryRelationship `json:"relationships"`
 	ChildCategories []Category             `json:"child_categories"`
-	Courses         []CategoryCourse       `json:"courses"`
+	Courses         []string               `json:"courses"`
 }
 
 type CategoryRequirement struct {

@@ -53,3 +53,17 @@ func (h *curriculumHandler) GetByID(c *fiber.Ctx) error {
 
 	return lodash.ResponseOK(c, curriculum)
 }
+
+func (h *curriculumHandler) GetCoursesByCurriculumID(c *fiber.Ctx) error {
+	curriculumID, err := c.ParamsInt("curriculumId", 0)
+	if err != nil {
+		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
+	}
+
+	courses, err := h.serv.GetCoursesByCurriculumID(curriculumID)
+	if err != nil {
+		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
+	}
+
+	return lodash.ResponseOK(c, courses)
+}

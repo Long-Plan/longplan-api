@@ -20,6 +20,12 @@ func (r *sysCategoryCourseRepo) GetByCategoryID(categoryID int) ([]model.SysCate
 	return categoryCourses, err
 }
 
+func (r *sysCategoryCourseRepo) GetByCurriculumID(curriculumID int) ([]model.SysCategoryCourse, error) {
+	var categoryCourses []model.SysCategoryCourse
+	err := r.db.Joins("inner join sys_categories on sys_categories.id = sys_category_courses.category_id").Where("sys_categories.curriculum_id = ?", curriculumID).Find(&categoryCourses).Error
+	return categoryCourses, err
+}
+
 func (r *sysCategoryCourseRepo) Create(categoryCourse *model.SysCategoryCourse) error {
 	return r.db.Create(categoryCourse).Error
 }
