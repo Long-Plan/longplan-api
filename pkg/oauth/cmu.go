@@ -21,30 +21,23 @@ type accessTokenDto struct {
 	AccessToken string `json:"access_token"`
 }
 
-type AccType string
-
-const (
-	Employee AccType = "MISEmpAcc"
-	Student  AccType = "StdAcc"
-)
-
 type UserDto struct {
-	CmuitaccountName   string  `json:"cmuitaccount_name"`
-	Cmuitaccount       string  `json:"cmuitaccount"`
-	StudentID          string  `json:"student_id"`
-	PrenameID          string  `json:"prename_id"`
-	PrenameTH          string  `json:"prename_TH"`
-	PrenameEN          string  `json:"prename_EN"`
-	FirstnameTH        string  `json:"firstname_TH"`
-	FirstnameEN        string  `json:"firstname_EN"`
-	LastnameTH         string  `json:"lastname_TH"`
-	LastnameEN         string  `json:"lastname_EN"`
-	OrganizationCode   string  `json:"organization_code"`
-	OrganizationNameTH string  `json:"organization_name_TH"`
-	OrganizationNameEN string  `json:"organization_name_EN"`
-	ItaccounttypeID    AccType `json:"itaccounttype_id"`
-	ItaccounttypeTH    string  `json:"itaccounttype_TH"`
-	ItaccounttypeEN    string  `json:"itaccounttype_EN"`
+	CmuitaccountName   string `json:"cmuitaccount_name"`
+	Cmuitaccount       string `json:"cmuitaccount"`
+	StudentID          string `json:"student_id"`
+	PrenameID          string `json:"prename_id"`
+	PrenameTH          string `json:"prename_TH"`
+	PrenameEN          string `json:"prename_EN"`
+	FirstnameTH        string `json:"firstname_TH"`
+	FirstnameEN        string `json:"firstname_EN"`
+	LastnameTH         string `json:"lastname_TH"`
+	LastnameEN         string `json:"lastname_EN"`
+	OrganizationCode   string `json:"organization_code"`
+	OrganizationNameTH string `json:"organization_name_TH"`
+	OrganizationNameEN string `json:"organization_name_EN"`
+	ItaccounttypeID    string `json:"itaccounttype_id"`
+	ItaccounttypeTH    string `json:"itaccounttype_TH"`
+	ItaccounttypeEN    string `json:"itaccounttype_EN"`
 }
 
 func CmuOauthValidation(code string) (*UserDto, error) {

@@ -18,4 +18,5 @@ func bindFirstVersionRouter(router fiber.Router) {
 	bindCourseDetailRouter(firstAPI)
 	bindCategoryRouter(firstAPI)
 	bindEnrolledCourseRouter(firstAPI)
+	bindOauthRouter(firstAPI)
 }
