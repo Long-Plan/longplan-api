@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/Long-Plan/longplan-api/internal/adaptor/handler"
 	"github.com/Long-Plan/longplan-api/internal/core/service"
+	middlewares "github.com/Long-Plan/longplan-api/internal/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -13,5 +14,5 @@ func bindEnrolledCourseRouter(router fiber.Router) {
 	serv := service.NewEnrolledCourseService()
 	handler := handler.NewEnrolledCourseHandler(serv)
 
-	enrolledCourse.Get(":studentId", handler.GetEnrolledCoursesByStudentID)
+	enrolledCourse.Get("", middlewares.AuthMiddleware(), handler.GetEnrolledCoursesByStudentCode)
 }

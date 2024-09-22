@@ -20,8 +20,8 @@ func NewEnrolledCourseService() domain.EnrolledCourseService {
 	return &enrolledCourseService{}
 }
 
-func (e *enrolledCourseService) GetEnrolledCoursesByStudentID(studentID string) ([]dto.MappingEnrolledCourse, error) {
-	body, err := fetchHTTP(studentID)
+func (e *enrolledCourseService) GetEnrolledCoursesByStudentCode(studentCode int) ([]dto.MappingEnrolledCourse, error) {
+	body, err := fetchHTTP(studentCode)
 	if err != nil {
 		return nil, errors.NewNotFoundError("Student ID not found")
 	}
@@ -49,7 +49,10 @@ func (e *enrolledCourseService) GetEnrolledCoursesByStudentID(studentID string) 
 					if err != nil {
 						return
 					}
-					student_transformed, err := transformInput(studentID)
+					student_transformed, err := transformInput(studentCode)
+					if err != nil {
+						return
+					}
 					numStudentID, err := strconv.Atoi(student_transformed)
 					if err != nil {
 						return
@@ -87,8 +90,8 @@ func (e *enrolledCourseService) GetEnrolledCoursesByStudentID(studentID string) 
 }
 
 // Fetch the HTTP response and return as a string
-func fetchHTTP(studentID string) (string, error) {
-	url := fmt.Sprintf("https://reg.eng.cmu.ac.th/reg/plan_detail/plan_data_term.php?student_id=%v", studentID)
+func fetchHTTP(studentCode int) (string, error) {
+	url := fmt.Sprintf("https://reg.eng.cmu.ac.th/reg/plan_detail/plan_data_term.php?student_id=%v", studentCode)
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
@@ -103,9 +106,9 @@ func fetchHTTP(studentID string) (string, error) {
 }
 
 // Extract the first two digits and transform the input string
-func transformInput(input string) (string, error) {
+func transformInput(input int) (string, error) {
 	re := regexp.MustCompile(`^(\d{2})`)
-	matches := re.FindStringSubmatch(input)
+	matches := re.FindStringSubmatch(string(input))
 
 	if len(matches) != 2 {
 		return "", fmt.Errorf("Invalid input format")

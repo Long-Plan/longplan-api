@@ -2,6 +2,7 @@ package handler
 
 import (
 	"regexp"
+	"strconv"
 
 	"github.com/Long-Plan/longplan-api/internal/core/domain"
 	"github.com/Long-Plan/longplan-api/pkg/lodash"
@@ -16,18 +17,23 @@ func NewEnrolledCourseHandler(serv domain.EnrolledCourseService) *enrolledCourse
 	return &enrolledCourseHandler{serv}
 }
 
-func (h *enrolledCourseHandler) GetEnrolledCoursesByStudentID(c *fiber.Ctx) error {
-	studentID := c.Params("studentId")
+func (h *enrolledCourseHandler) GetEnrolledCoursesByStudentCode(c *fiber.Ctx) error {
+	studentCode := c.Locals("student_code").(string)
 	studentIDRegex := regexp.MustCompile(`^\d{9}$`)
 
-	if studentID == "" {
+	if studentCode == "" {
 		return lodash.ResponseBadRequest(c)
 	}
-	if !studentIDRegex.MatchString(studentID) {
+	if !studentIDRegex.MatchString(studentCode) {
 		return lodash.ResponseBadRequest(c)
 	}
 
-	mappings, err := h.serv.GetEnrolledCoursesByStudentID(studentID)
+	studentCodeInt, err := strconv.Atoi(studentCode)
+	if err != nil {
+		return lodash.ResponseBadRequest(c)
+	}
+
+	mappings, err := h.serv.GetEnrolledCoursesByStudentCode(studentCodeInt)
 	if err != nil {
 		return lodash.ResponseError(c, err)
 	}
