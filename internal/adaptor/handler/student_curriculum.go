@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/Long-Plan/longplan-api/internal/core/domain"
+	"github.com/Long-Plan/longplan-api/internal/core/dto"
 	"github.com/Long-Plan/longplan-api/internal/core/model"
 	"github.com/Long-Plan/longplan-api/pkg/errors"
 	"github.com/Long-Plan/longplan-api/pkg/lodash"
@@ -45,7 +46,7 @@ func (h *studentCurriculumHandler) GetByStudentCurriculumID(c *fiber.Ctx) error 
 }
 
 func (h *studentCurriculumHandler) Create(c *fiber.Ctx) error {
-	var studentCurriculum model.StudentCurriculum
+	var studentCurriculum dto.StudentCurriculumCreate
 	if err := c.BodyParser(&studentCurriculum); err != nil {
 		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
 	}

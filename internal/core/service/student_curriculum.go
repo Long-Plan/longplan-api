@@ -2,8 +2,10 @@ package service
 
 import (
 	"github.com/Long-Plan/longplan-api/internal/core/domain"
+	"github.com/Long-Plan/longplan-api/internal/core/dto"
 	"github.com/Long-Plan/longplan-api/internal/core/model"
 	"github.com/Long-Plan/longplan-api/internal/core/port"
+	"github.com/Long-Plan/longplan-api/pkg/mapper"
 )
 
 type studentCurriculumService struct {
@@ -27,16 +29,93 @@ func NewStudentCurriculumService(
 	}
 }
 
-func (s *studentCurriculumService) GetByStudentCode(studentCode int) ([]model.StudentCurriculum, error) {
-	return s.studentCurriculumRepo.GetByStudentCode(studentCode)
+func (s *studentCurriculumService) GetByStudentCode(studentCode int) ([]dto.StudentCurriculum, error) {
+	studentCurricula, err := s.studentCurriculumRepo.GetByStudentCode(studentCode)
+	if err != nil {
+		return nil, err
+	}
+	studentCurriculaDto, err := mapper.MapSlice[model.StudentCurriculum, dto.StudentCurriculum](studentCurricula)
+	if err != nil {
+		return nil, err
+	}
+
+	for i, studentCurriculum := range studentCurriculaDto {
+		studentCurriculumCourses, err := s.studentCurriculumCourseRepo.GetByStudentCurriculumID(studentCurriculum.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		courses, err := mapper.MapSlice[model.StudentCurriculumCourse, dto.StudentCurriculumCourse](studentCurriculumCourses)
+		if err != nil {
+			return nil, err
+		}
+		studentCurriculaDto[i].Courses = courses
+
+		studentCurriculumQuestionAnswers, err := s.studentCurriculumQuestionAnswerRepo.GetByStudentCurriculumID(studentCurriculum.ID)
+		if err != nil {
+			return nil, err
+		}
+
+		answers, err := mapper.MapSlice[model.StudentCurriculumQuestionAnswer, dto.StudentCurriculumQuestionAnswer](studentCurriculumQuestionAnswers)
+		if err != nil {
+			return nil, err
+		}
+		studentCurriculaDto[i].Answers = answers
+	}
+	return studentCurriculaDto, nil
 }
 
-func (s *studentCurriculumService) GetByStudentCurriculumID(studentCurriculumID int) (*model.StudentCurriculum, error) {
-	return s.studentCurriculumRepo.GetByStudentCurriculumID(studentCurriculumID)
+func (s *studentCurriculumService) GetByStudentCurriculumID(studentCurriculumID int) (*dto.StudentCurriculum, error) {
+	studentCurriculum, err := s.studentCurriculumRepo.GetByStudentCurriculumID(studentCurriculumID)
+	if err != nil {
+		return nil, err
+	}
+
+	studentCurriculumDto, err := mapper.Mapper[model.StudentCurriculum, dto.StudentCurriculum](*studentCurriculum)
+	if err != nil {
+		return nil, err
+	}
+
+	studentCurriculumCourses, err := s.studentCurriculumCourseRepo.GetByStudentCurriculumID(studentCurriculum.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	courses, err := mapper.MapSlice[model.StudentCurriculumCourse, dto.StudentCurriculumCourse](studentCurriculumCourses)
+	if err != nil {
+		return nil, err
+	}
+	studentCurriculumDto.Courses = courses
+
+	studentCurriculumQuestionAnswers, err := s.studentCurriculumQuestionAnswerRepo.GetByStudentCurriculumID(studentCurriculum.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	answers, err := mapper.MapSlice[model.StudentCurriculumQuestionAnswer, dto.StudentCurriculumQuestionAnswer](studentCurriculumQuestionAnswers)
+	if err != nil {
+		return nil, err
+	}
+	studentCurriculumDto.Answers = answers
+
+	return studentCurriculumDto, nil
 }
 
-func (s *studentCurriculumService) Create(studentCurriculum model.StudentCurriculum) error {
+func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculumCreate) error {
 	courses, err := s.sysCategoryCourseRepo.GetByCurriculumID(studentCurriculum.CurriculumID)
+	if err != nil {
+		return err
+	}
+
+	studentCurriculumModel := model.StudentCurriculum{
+		Name:         studentCurriculum.Name,
+		StudentCode:  studentCurriculum.StudentCode,
+		CurriculumID: studentCurriculum.CurriculumID,
+		IsSystem:     studentCurriculum.IsSystem,
+		IsDefault:    studentCurriculum.IsDefault,
+	}
+
+	err = s.studentCurriculumRepo.Create(&studentCurriculumModel)
 	if err != nil {
 		return err
 	}
@@ -44,7 +123,7 @@ func (s *studentCurriculumService) Create(studentCurriculum model.StudentCurricu
 	for _, course := range courses {
 		if course.Year != nil && course.Semester != nil {
 			studentCurriculumCourse := model.StudentCurriculumCourse{
-				StudentCurriculumID: studentCurriculum.ID,
+				StudentCurriculumID: studentCurriculumModel.ID,
 				Year:                *course.Year,
 				Semester:            *course.Semester,
 				CourseNo:            course.CourseNo,
@@ -55,7 +134,7 @@ func (s *studentCurriculumService) Create(studentCurriculum model.StudentCurricu
 			}
 		}
 	}
-	return s.studentCurriculumRepo.Create(&studentCurriculum)
+	return nil
 }
 
 func (s *studentCurriculumService) Update(studentCurriculum model.StudentCurriculum) error {
