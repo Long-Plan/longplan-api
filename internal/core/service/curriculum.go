@@ -147,13 +147,11 @@ func (s *curriculumService) GetCoursesByCurriculumID(curriculumID int) ([]dto.Ca
 		}
 		categoryCourses[i].Requisites = requisites
 
-		if categoryCourse.CourseNo != nil {
-			courseDetail, err := s.sysCourseDetailRepo.GetByCourseNo(*categoryCourse.CourseNo)
-			if err != nil {
-				return nil, err
-			}
-			categoryCourses[i].Detail = *courseDetail
+		courseDetail, err := s.sysCourseDetailRepo.GetByCourseNo(categoryCourse.CourseNo)
+		if err != nil {
+			return nil, err
 		}
+		categoryCourses[i].Detail = *courseDetail
 	}
 
 	return categoryCourses, nil

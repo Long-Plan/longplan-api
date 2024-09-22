@@ -90,7 +90,7 @@ func (s *categoryService) getCategoryHelper(startCate model.SysCategory, cates [
 	}
 
 	for _, course := range startCate.Courses {
-		category.Courses = append(category.Courses, *course.CourseNo)
+		category.Courses = append(category.Courses, course.CourseNo)
 	}
 
 	return category, nil

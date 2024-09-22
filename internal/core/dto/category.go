@@ -40,12 +40,12 @@ type CategoryRelationship struct {
 }
 
 type CategoryCourse struct {
-	ID         int     `json:"id"`
-	CategoryID int     `json:"category_id"`
-	CourseNo   *string `json:"course_no,omitempty"`
-	Semester   *int    `json:"semester,omitempty"`
-	Year       *int    `json:"years,omitempty"`
-	Credit     int     `json:"credit"`
+	ID         int    `json:"id"`
+	CategoryID int    `json:"category_id"`
+	CourseNo   string `json:"course_no"`
+	Semester   *int   `json:"semester,omitempty"`
+	Year       *int   `json:"years,omitempty"`
+	Credit     int    `json:"credit"`
 
 	Requisites []CategoryCourseRequisite `json:"requisites"`
 	Detail     model.SysCourseDetail     `json:"detail"`
