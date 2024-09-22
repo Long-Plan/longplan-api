@@ -31,7 +31,7 @@ type StudentCurriculumCourse struct {
 }
 
 type StudentCurriculumQuestionAnswer struct {
-	ID         int    `json:"id"`
-	QuestionID int    `json:"question_id"`
-	Answer     string `json:"answer"`
+	ID         int `json:"id"`
+	QuestionID int `json:"question_id"`
+	ChoiceID   int `json:"choice_id"`
 }

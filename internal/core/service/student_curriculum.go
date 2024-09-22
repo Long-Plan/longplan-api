@@ -120,6 +120,18 @@ func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculu
 		return err
 	}
 
+	for _, answer := range studentCurriculum.Answers {
+		studentCurriculumQuestionAnswer := model.StudentCurriculumQuestionAnswer{
+			StudentCode:  studentCurriculum.StudentCode,
+			CurriculumID: studentCurriculum.CurriculumID,
+			QuestionID:   answer.QuestionID,
+			ChoiceID:     answer.ChoiceID,
+		}
+		if err := s.studentCurriculumQuestionAnswerRepo.Create(&studentCurriculumQuestionAnswer); err != nil {
+			return err
+		}
+	}
+
 	for _, course := range courses {
 		if course.Year != nil && course.Semester != nil {
 			studentCurriculumCourse := model.StudentCurriculumCourse{
