@@ -15,5 +15,5 @@ func bindEnrolledCourseRouter(router fiber.Router) {
 	handler := handler.NewEnrolledCourseHandler(serv)
 
 	enrolledCourse.Get("", middlewares.AuthMiddleware(), handler.GetEnrolledCoursesByStudentCode)
-	enrolledCourse.Get("/:student_code", middlewares.AuthMiddleware(), handler.GetEnrolledCoursesByStudentCodeParam)
+	enrolledCourse.Get("/:student_code", handler.GetEnrolledCoursesByStudentCodeParam)
 }
