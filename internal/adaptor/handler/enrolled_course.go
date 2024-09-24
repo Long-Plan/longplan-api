@@ -40,3 +40,27 @@ func (h *enrolledCourseHandler) GetEnrolledCoursesByStudentCode(c *fiber.Ctx) er
 
 	return lodash.ResponseOK(c, mappings)
 }
+
+func (h *enrolledCourseHandler) GetEnrolledCoursesByStudentCodeParam(c *fiber.Ctx) error {
+	studentCode := c.Params("student_code")
+	studentIDRegex := regexp.MustCompile(`^\d{9}$`)
+
+	if studentCode == "" {
+		return lodash.ResponseBadRequest(c)
+	}
+	if !studentIDRegex.MatchString(studentCode) {
+		return lodash.ResponseBadRequest(c)
+	}
+
+	studentCodeInt, err := strconv.Atoi(studentCode)
+	if err != nil {
+		return lodash.ResponseBadRequest(c)
+	}
+
+	mappings, err := h.serv.GetEnrolledCoursesByStudentCode(studentCodeInt)
+	if err != nil {
+		return lodash.ResponseError(c, err)
+	}
+
+	return lodash.ResponseOK(c, mappings)
+}
