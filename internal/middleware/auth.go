@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"log"
+	"strings"
 
 	"github.com/Long-Plan/longplan-api/config"
 	"github.com/Long-Plan/longplan-api/pkg/errors"
@@ -18,10 +19,12 @@ func AuthMiddleware() func(*fiber.Ctx) error {
 
 		invalidToken := errors.NewUnauthorizedError(errors.AuthErr("invalid token").Error())
 
-		token := c.Cookies("token")
+		token := c.Get("Authorization")
 		if lo.IsEmpty(token) {
 			return lodash.ResponseError(c, errors.NewUnauthorizedError("empty token"))
 		}
+
+		token = strings.Split(token, " ")[1]
 
 		parsedAccessToken, err := jwt.ParseWithClaims(token, &oauth.UserClaims{}, func(token *jwt.Token) (interface{}, error) {
 			return []byte(config.Secret), nil
