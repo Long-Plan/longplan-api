@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -40,8 +41,8 @@ type UserDto struct {
 	ItaccounttypeEN    string `json:"itaccounttype_EN"`
 }
 
-func CmuOauthValidation(code string) (*UserDto, error) {
-	accessToken, err := getAccessToken(code)
+func CmuOauthValidation(code string, isLocalOrigin bool) (*UserDto, error) {
+	accessToken, err := getAccessToken(code, isLocalOrigin)
 	if err != nil {
 		return nil, err
 	}
@@ -52,15 +53,21 @@ func CmuOauthValidation(code string) (*UserDto, error) {
 	return user, nil
 }
 
-func getAccessToken(code string) (*accessTokenDto, error) {
+func getAccessToken(code string, isLocalOrigin bool) (*accessTokenDto, error) {
+	mode := os.Getenv("mode")
 	config := config.Config.CmuOauth
 	url := config.CmuOauthToken
 	header := map[string]string{
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
+	redirectURI := config.CmuOauthRedirectURL
+	if isLocalOrigin && mode == "dev" {
+		redirectURI = config.CmuOauthRedirectURLLocal
+	}
+
 	params := map[string]interface{}{
 		"code":          code,
-		"redirect_uri":  config.CmuOauthRedirectURL,
+		"redirect_uri":  redirectURI,
 		"client_id":     config.CmuOauthClientID,
 		"client_secret": config.CmuOauthClientSecret,
 		"grant_type":    "authorization_code",

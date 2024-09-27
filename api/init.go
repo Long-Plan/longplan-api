@@ -1,9 +1,6 @@
 package api
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/Long-Plan/longplan-api/config"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -16,21 +13,14 @@ const API_PREFIX = "/api"
 
 func InitAPI(app *fiber.App) {
 	config := config.Config.Application
-	domain := config.Domain
-	mode := os.Getenv("mode")
-	origins := fmt.Sprintf("https://%v, http://%v", domain, domain)
+	origin := config.ClientOrigin
 
-	switch {
-	case lo.IsEmpty(domain) || mode == "local":
-		domain = "localhost:3000"
-		origins = fmt.Sprintf("https://%v, http://%v", domain, domain)
-	case mode == "dev":
-		origins = fmt.Sprintf("https://localhost:3000, http://localhost:3000, https://%v:8080, http://%v:8080", domain, domain)
+	if lo.IsEmpty(origin) {
+		origin = "*"
 	}
 
 	app.Use(cors.New(cors.Config{
-		AllowOrigins:     origins,
-		AllowCredentials: true,
+		AllowOrigins: origin,
 	}))
 
 	app.Use(logger.New())

@@ -3,6 +3,7 @@ package handler
 import (
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Long-Plan/longplan-api/config"
@@ -30,11 +31,16 @@ func NewOauthHandler(accountService domain.AccountService) *oauthHandler {
 
 func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 	config := config.Config.Application
+	origin := c.Get("Origin")
+	var isLocalOrigin bool
+	if strings.Contains(origin, "localhost") {
+		isLocalOrigin = true
+	}
 	code := c.Query("code", "")
 	if lo.IsEmpty(code) {
 		return lodash.ResponseBadRequest(c)
 	}
-	user, err := oauth.CmuOauthValidation(code)
+	user, err := oauth.CmuOauthValidation(code, isLocalOrigin)
 	if err != nil {
 		return lodash.ResponseError(c, errors.NewStatusBadGatewayError(err.Error()))
 	}

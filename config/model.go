@@ -7,10 +7,10 @@ type LocalConfig struct {
 }
 
 type ApplicationConfig struct {
-	Name   string `mapstructure:"name"`
-	Domain string `mapstructure:"domain"`
-	Port   string `mapstructure:"port"`
-	Secret string `mapstructure:"secret"`
+	Name         string `mapstructure:"name"`
+	ClientOrigin string `mapstructure:"client_origin"`
+	Port         string `mapstructure:"port"`
+	Secret       string `mapstructure:"secret"`
 }
 
 type DatabaseConfig struct {
@@ -22,9 +22,10 @@ type DatabaseConfig struct {
 }
 
 type CmuOauthConfig struct {
-	CmuOauthInfo         string `mapstructure:"cmu_oauth_info"`
-	CmuOauthToken        string `mapstructure:"cmu_oauth_token"`
-	CmuOauthRedirectURL  string `mapstructure:"cmu_oauth_redirect_url"`
-	CmuOauthClientID     string `mapstructure:"cmu_oauth_client_id"`
-	CmuOauthClientSecret string `mapstructure:"cmu_oauth_client_secret"`
+	CmuOauthInfo             string `mapstructure:"cmu_oauth_info"`
+	CmuOauthToken            string `mapstructure:"cmu_oauth_token"`
+	CmuOauthRedirectURL      string `mapstructure:"cmu_oauth_redirect_url"`
+	CmuOauthRedirectURLLocal string `mapstructure:"cmu_oauth_redirect_url_local"`
+	CmuOauthClientID         string `mapstructure:"cmu_oauth_client_id"`
+	CmuOauthClientSecret     string `mapstructure:"cmu_oauth_client_secret"`
 }
