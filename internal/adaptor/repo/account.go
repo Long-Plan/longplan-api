@@ -1,6 +1,8 @@
 package repo
 
 import (
+	"errors"
+
 	"github.com/Long-Plan/longplan-api/internal/core/model"
 	"github.com/Long-Plan/longplan-api/internal/core/port"
 	"gorm.io/gorm"
@@ -23,7 +25,15 @@ func (r *accountRepo) GetByCMUITAccount(CMUITAccount string) (*model.Account, er
 }
 
 func (r *accountRepo) Save(account *model.Account) error {
-	return r.db.Save(account).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := r.db.Where("cmuitaccount = ?", account.CMUITAccount).First(&account).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return tx.Create(account).Error
+			}
+			return err
+		}
+		return tx.Save(account).Error
+	})
 }
 
 func (r *accountRepo) Delete(CMUITAccount string) error {
