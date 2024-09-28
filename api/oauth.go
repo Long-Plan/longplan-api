@@ -23,6 +23,5 @@ func bindOauthRouter(router fiber.Router) {
 	oauth.Get("/me", middlewares.AuthMiddleware(), hdl.GetUser)
 
 	oauth.Post("", hdl.SignIn)
-	oauth.Post("/student-mock", hdl.SaveStudentMock)
 	oauth.Post("/signout", middlewares.AuthMiddleware(), hdl.Logout)
 }
