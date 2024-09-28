@@ -2,6 +2,7 @@ package repo
 
 import (
 	"errors"
+	"log"
 
 	"github.com/Long-Plan/longplan-api/internal/core/model"
 	"github.com/Long-Plan/longplan-api/internal/core/port"
@@ -26,6 +27,8 @@ func (r *studentRepo) GetByStudentCode(studentCode int) (*model.Student, error) 
 
 func (r *studentRepo) Save(student *model.Student) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
+		log.Print(student)
+		log.Print(student.Code)
 		if err := r.db.Where("code = ?", student.Code).First(student).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return tx.Create(student).Error
