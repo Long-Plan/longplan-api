@@ -66,13 +66,9 @@ func getAccessToken(code string, isLocalOrigin bool) (*accessTokenDto, error) {
 		"Content-Type": "application/x-www-form-urlencoded",
 	}
 	redirectURI := config.CmuOauthRedirectURL
-	fmt.Print(redirectURI)
-	fmt.Print(isLocalOrigin)
-	fmt.Print(isLocalOrigin && mode == "dev")
 	if isLocalOrigin && mode == "dev" {
 		redirectURI = config.CmuOauthRedirectURLLocal
 	}
-	fmt.Print(redirectURI)
 
 	params := map[string]interface{}{
 		"code":          code,
