@@ -5,6 +5,7 @@ import (
 	"github.com/Long-Plan/longplan-api/internal/adaptor/handler"
 	"github.com/Long-Plan/longplan-api/internal/adaptor/repo"
 	"github.com/Long-Plan/longplan-api/internal/core/service"
+	middlewares "github.com/Long-Plan/longplan-api/internal/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,5 +16,5 @@ func bindStudentRouter(router fiber.Router) {
 	studentRepo := repo.NewStudentRepo(infrastructure.DB)
 	studentService := service.NewStudentService(studentRepo)
 	hdl := handler.NewStudentHandler(studentService)
-	student.Put("", hdl.Update)
+	student.Put("", middlewares.AuthMiddleware(), hdl.Update)
 }
