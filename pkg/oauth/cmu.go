@@ -10,7 +10,6 @@ import (
 	"github.com/Long-Plan/longplan-api/pkg/errors"
 	"github.com/Long-Plan/longplan-api/pkg/lodash"
 	"github.com/Long-Plan/longplan-api/pkg/requestor"
-	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -85,16 +84,15 @@ func getAccessToken(code string, isLocalOrigin bool) (*accessTokenDto, error) {
 		return nil, errors.InternalErr(err.Error())
 	}
 
-	log.Info("result: ", res)
-
 	statusCodeStr := strconv.Itoa(statusCode)
 	if strings.HasPrefix(statusCodeStr, "2") {
 		var result accessTokenDto
 		lodash.Recast(res, &result)
 		return &result, nil
 	} else {
-
-		return nil, errors.CmuOauthErr("can't get access_token")
+		var errorModel errorDto
+		lodash.Recast(res, &errorModel)
+		return nil, errors.CmuOauthErr(fmt.Sprintf("error: %v, error_desc: %v", errorModel.Error, errorModel.ErrorDescription))
 	}
 }
 
@@ -115,8 +113,6 @@ func getCmuBasicInfo(accessToken string) (*UserDto, error) {
 		lodash.Recast(res, &result)
 		return &result, nil
 	} else {
-		var errorModel errorDto
-		lodash.Recast(res, &errorModel)
-		return nil, errors.CmuOauthErr(fmt.Sprintf("error: %v, error_desc: %v", errorModel.Error, errorModel.ErrorDescription))
+		return nil, errors.CmuOauthErr("can't get user info")
 	}
 }
