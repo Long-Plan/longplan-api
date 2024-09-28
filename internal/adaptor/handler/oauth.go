@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -23,9 +22,10 @@ type oauthHandler struct {
 	studentService domain.StudentService
 }
 
-func NewOauthHandler(accountService domain.AccountService) *oauthHandler {
+func NewOauthHandler(accountService domain.AccountService, studentService domain.StudentService) *oauthHandler {
 	return &oauthHandler{
 		accountService: accountService,
+		studentService: studentService,
 	}
 }
 
@@ -45,8 +45,6 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 		return lodash.ResponseError(c, errors.NewStatusBadGatewayError(err.Error()))
 	}
 
-	log.Print(user)
-
 	accountModel := model.Account{
 		CMUITAccount: user.Cmuitaccount,
 		Prename:      "",
@@ -56,19 +54,13 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 		Organization: user.OrganizationNameEN,
 	}
 
-	log.Print(accountModel)
-
 	err = h.accountService.Save(accountModel)
 	if err != nil {
 		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 	}
 
-	log.Print(user.ItaccounttypeID)
-
 	if user.ItaccounttypeID == "StdAcc" {
-		log.Printf("student: %v %T", user.StudentID, user.StudentID)
 		code, err := strconv.Atoi(user.StudentID)
-		log.Print(code)
 		if err != nil {
 			return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 		}
@@ -76,13 +68,11 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 			Code: code,
 		}
 
-		log.Print(studentModel)
 		err = h.studentService.Save(studentModel)
 		if err != nil {
 			return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 		}
 
-		log.Print("success")
 	}
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, &oauth.UserClaims{
@@ -94,11 +84,23 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 
 	token, err := claims.SignedString([]byte(config.Secret))
 	if err != nil {
-		log.Print(err)
 		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 	}
 
 	return lodash.ResponseOK(c, token)
+}
+
+func (h oauthHandler) SaveStudentMock(c *fiber.Ctx) error {
+	student := model.Student{
+		Code: 620610019,
+	}
+
+	err := h.studentService.Save(student)
+	if err != nil {
+		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
+	}
+
+	return lodash.ResponseOK(c, student)
 }
 
 func (h oauthHandler) GetUser(c *fiber.Ctx) error {

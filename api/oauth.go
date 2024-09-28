@@ -18,9 +18,11 @@ func bindOauthRouter(router fiber.Router) {
 	accountTypeRepo := repo.NewAccountTypeRepo(infrastructure.DB)
 	organizationRepo := repo.NewOrganizationRepo(infrastructure.DB)
 	accountService := service.NewAccountService(accountRepo, accountTypeRepo, organizationRepo)
-	hdl := handler.NewOauthHandler(accountService)
+	studentService := service.NewStudentService(repo.NewStudentRepo(infrastructure.DB))
+	hdl := handler.NewOauthHandler(accountService, studentService)
 	oauth.Get("/me", middlewares.AuthMiddleware(), hdl.GetUser)
 
 	oauth.Post("", hdl.SignIn)
+	oauth.Post("/student-mock", hdl.SaveStudentMock)
 	oauth.Post("/signout", middlewares.AuthMiddleware(), hdl.Logout)
 }

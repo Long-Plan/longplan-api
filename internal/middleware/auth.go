@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"log"
 	"strings"
 
 	"github.com/Long-Plan/longplan-api/config"
@@ -30,7 +29,6 @@ func AuthMiddleware() func(*fiber.Ctx) error {
 			return []byte(config.Secret), nil
 		})
 		if err != nil {
-			log.Print(err)
 			return lodash.ResponseError(c, invalidToken)
 		}
 		user := &parsedAccessToken.Claims.(*oauth.UserClaims).User
