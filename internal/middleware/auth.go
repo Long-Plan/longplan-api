@@ -23,6 +23,10 @@ func AuthMiddleware() func(*fiber.Ctx) error {
 			return lodash.ResponseError(c, errors.NewUnauthorizedError("empty token"))
 		}
 
+		if !strings.HasPrefix(token, "Bearer ") {
+			return lodash.ResponseError(c, invalidToken)
+		}
+
 		token = strings.Split(token, " ")[1]
 
 		parsedAccessToken, err := jwt.ParseWithClaims(token, &oauth.UserClaims{}, func(token *jwt.Token) (interface{}, error) {

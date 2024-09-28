@@ -108,7 +108,7 @@ func fetchHTTP(studentCode int) (string, error) {
 // Extract the first two digits and transform the input string
 func transformInput(input int) (string, error) {
 	re := regexp.MustCompile(`^(\d{2})`)
-	matches := re.FindStringSubmatch(string(input))
+	matches := re.FindStringSubmatch(strconv.Itoa(input))
 
 	if len(matches) != 2 {
 		return "", fmt.Errorf("Invalid input format")
