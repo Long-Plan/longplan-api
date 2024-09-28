@@ -26,7 +26,7 @@ func (r *studentRepo) GetByStudentCode(studentCode int) (*model.Student, error) 
 
 func (r *studentRepo) Save(student *model.Student) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
-		if err := r.db.Where("code = ?", student.Code).First(&student).Error; err != nil {
+		if err := r.db.Where("code = ?", student.Code).First(student).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return tx.Create(student).Error
 			}

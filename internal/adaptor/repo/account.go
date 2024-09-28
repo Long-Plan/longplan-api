@@ -26,7 +26,7 @@ func (r *accountRepo) GetByCMUITAccount(CMUITAccount string) (*model.Account, er
 
 func (r *accountRepo) Save(account *model.Account) error {
 	return r.db.Transaction(func(tx *gorm.DB) error {
-		if err := r.db.Where("cmuitaccount = ?", account.CMUITAccount).First(&account).Error; err != nil {
+		if err := r.db.Where("cmuitaccount = ?", account.CMUITAccount).First(account).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return tx.Create(account).Error
 			}
