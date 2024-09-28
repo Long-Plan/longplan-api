@@ -10,6 +10,7 @@ import (
 	"github.com/Long-Plan/longplan-api/pkg/errors"
 	"github.com/Long-Plan/longplan-api/pkg/lodash"
 	"github.com/Long-Plan/longplan-api/pkg/requestor"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -78,6 +79,8 @@ func getAccessToken(code string, isLocalOrigin bool) (*accessTokenDto, error) {
 	if err != nil {
 		return nil, errors.InternalErr(err.Error())
 	}
+
+	log.Info("result: ", res)
 
 	statusCodeStr := strconv.Itoa(statusCode)
 	if strings.HasPrefix(statusCodeStr, "2") {
