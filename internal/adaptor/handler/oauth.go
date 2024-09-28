@@ -66,7 +66,9 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 	log.Print(user.ItaccounttypeID)
 
 	if user.ItaccounttypeID == "StdAcc" {
+		log.Printf("student: %v %T", user.StudentID, user.StudentID)
 		code, err := strconv.Atoi(user.StudentID)
+		log.Print(code)
 		if err != nil {
 			return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 		}
