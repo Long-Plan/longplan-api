@@ -45,6 +45,8 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 		return lodash.ResponseError(c, errors.NewStatusBadGatewayError(err.Error()))
 	}
 
+	log.Print(user)
+
 	accountModel := model.Account{
 		CMUITAccount: user.Cmuitaccount,
 		Prename:      "",
@@ -54,10 +56,14 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 		Organization: user.OrganizationNameEN,
 	}
 
+	log.Print(accountModel)
+
 	err = h.accountService.Save(accountModel)
 	if err != nil {
 		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 	}
+
+	log.Print(user.ItaccounttypeID)
 
 	if user.ItaccounttypeID == "StdAcc" {
 		code, err := strconv.Atoi(user.StudentID)
@@ -67,10 +73,14 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 		studentModel := model.Student{
 			Code: code,
 		}
+
+		log.Print(studentModel)
 		err = h.studentService.Save(studentModel)
 		if err != nil {
 			return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 		}
+
+		log.Print("success")
 	}
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, &oauth.UserClaims{
