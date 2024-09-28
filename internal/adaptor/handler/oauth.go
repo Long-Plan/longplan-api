@@ -2,7 +2,6 @@ package handler
 
 import (
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/Long-Plan/longplan-api/config"
@@ -31,9 +30,8 @@ func NewOauthHandler(accountService domain.AccountService, studentService domain
 
 func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 	config := config.Config.Application
-	origin := c.Get("Origin")
 	var isLocalOrigin bool
-	if strings.Contains(origin, "localhost") {
+	if local := c.Query("local", "false"); local == "true" {
 		isLocalOrigin = true
 	}
 	code := c.Query("code", "")
@@ -72,7 +70,6 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 		if err != nil {
 			return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 		}
-
 	}
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, &oauth.UserClaims{
@@ -88,19 +85,6 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 	}
 
 	return lodash.ResponseOK(c, token)
-}
-
-func (h oauthHandler) SaveStudentMock(c *fiber.Ctx) error {
-	student := model.Student{
-		Code: 620610019,
-	}
-
-	err := h.studentService.Save(student)
-	if err != nil {
-		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
-	}
-
-	return lodash.ResponseOK(c, student)
 }
 
 func (h oauthHandler) GetUser(c *fiber.Ctx) error {
