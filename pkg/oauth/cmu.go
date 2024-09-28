@@ -19,6 +19,11 @@ type UserClaims struct {
 	jwt.RegisteredClaims
 }
 
+type errorDto struct {
+	Error            string `json:"error"`
+	ErrorDescription string `json:"error_description"`
+}
+
 type accessTokenDto struct {
 	AccessToken string `json:"access_token"`
 }
@@ -88,6 +93,7 @@ func getAccessToken(code string, isLocalOrigin bool) (*accessTokenDto, error) {
 		lodash.Recast(res, &result)
 		return &result, nil
 	} else {
+
 		return nil, errors.CmuOauthErr("can't get access_token")
 	}
 }
@@ -109,6 +115,8 @@ func getCmuBasicInfo(accessToken string) (*UserDto, error) {
 		lodash.Recast(res, &result)
 		return &result, nil
 	} else {
-		return nil, errors.CmuOauthErr("can't get user info")
+		var errorModel errorDto
+		lodash.Recast(res, &errorModel)
+		return nil, errors.CmuOauthErr(fmt.Sprintf("error: %v, error_desc: %v", errorModel.Error, errorModel.ErrorDescription))
 	}
 }
