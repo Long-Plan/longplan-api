@@ -26,7 +26,7 @@ func (r *sysCourseDetailRepo) GetAll() ([]model.SysCourseDetail, error) {
 func (r *sysCourseDetailRepo) GetByCourseNo(courseNo string) (*model.SysCourseDetail, error) {
 	var courseDetail model.SysCourseDetail
 	r.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Where("course_no = ?", courseNo).First(&courseDetail).Error; err != nil {
+		if err := tx.Where("course_no = ?", courseNo).First(&model.SysCourseDetail{}).Error; err != nil {
 			if err == gorm.ErrRecordNotFound {
 				courseDetail, err := scraping.ScrapeCourseDetail(courseNo)
 				if err != nil {
