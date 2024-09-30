@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"strconv"
 
 	"github.com/Long-Plan/longplan-api/internal/core/domain"
@@ -21,14 +22,21 @@ func NewStudentHandler(serv domain.StudentService) *studentHandler {
 }
 
 func (h studentHandler) Update(c *fiber.Ctx) error {
-	studentCode, err := strconv.Atoi(c.Params("student_code"))
+	studentCodeStr, ok := c.Locals("student_code").(string)
+	if !ok {
+		log.Println("student_code is not a string")
+		return lodash.ResponseBadRequest(c)
+	}
+	studentCode, err := strconv.Atoi(studentCodeStr)
 	if err != nil {
+		log.Println(err)
 		return lodash.ResponseBadRequest(c)
 	}
 
 	var studentUpdateDto dto.StudentUpdateDto
-	err = c.BodyParser(studentUpdateDto)
+	err = c.BodyParser(&studentUpdateDto)
 	if err != nil {
+		log.Println(err)
 		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
 	}
 
