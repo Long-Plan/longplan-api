@@ -1,0 +1,19 @@
+app:
+  name:
+  domain:
+  port:
+  secret:
+
+database:
+  host:
+  port:
+  name:
+  user:
+  pass:
+
+cmu_oauth:
+  cmu_oauth_info:
+  cmu_oauth_token:
+  cmu_oauth_redirect_url:
+  cmu_oauth_client_id:
+  cmu_oauth_client_secret:

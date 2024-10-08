@@ -1,15 +1,40 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"fmt"
+	"log"
+
+	"github.com/Long-Plan/longplan-api/api"
+	"github.com/Long-Plan/longplan-api/config"
+	"github.com/Long-Plan/longplan-api/infrastructure"
+	"github.com/Long-Plan/longplan-api/pkg/lodash"
+	"github.com/gofiber/fiber/v2"
+)
+
+var cfg config.ApplicationConfig
+
+func init() {
+	lodash.SetTimeZone("Asia/Bangkok")
+	config.InitConfig()
+	cfg = config.Config.Application
+	infrastructure.InitDB()
+}
 
 func main() {
 	app := fiber.New()
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.Status(200).SendString("Hello world!")
-	})
-	app.Get("/:name", func(c *fiber.Ctx) error {
-		name := c.Params("name")
-		return c.Status(200).SendString("Hello " + name)
-	})
-	app.Listen(":8000")
+	api.InitAPI(app)
+
+	addr := getAddress()
+	log.Printf("%v started at %v", cfg.Name, cfg.Port)
+	if err := app.Listen(addr); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func getAddress() string {
+	addr := ":8000"
+	if cfg.Port != "" {
+		addr = fmt.Sprintf(":%v", cfg.Port)
+	}
+	return addr
 }

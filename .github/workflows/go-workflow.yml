@@ -30,8 +30,9 @@ jobs:
             docker rm \$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/main/
-            docker run -d -p 5000:5000 -v /home/longplan/backend/main/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
-            rm -rf /home/longplan/backend/main/*
+            docker run -d -p 5000:5000 -v /home/longplan/backend/main/config:/config -e mode='prod' --restart unless-stopped --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+            find /home/longplan/backend/main/ -mindepth 1 ! -path "/home/longplan/backend/main/config" ! -path "/home/longplan/backend/main/config/config.prod.yaml" -delete
+            docker system prune -a -f
           EOF
 
     env:
@@ -58,8 +59,9 @@ jobs:
             docker rm \$(docker ps -aqf "name=${{ env.APP_NAME }}") -f || true
             docker rmi \$(docker images -aqf "reference=${{ env.APP_NAME }}") || true
             docker build --platform linux/amd64 -t ${{ env.APP_NAME }} /home/longplan/backend/develop/
-            docker run -d -p 8000:8000 -v /home/longplan/backend/develop/config:/config --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
-            rm -rf /home/longplan/backend/develop/*
+            docker run -d -p 8000:8000 -v /home/longplan/backend/develop/config:/config -e mode='dev' --restart unless-stopped --name ${{ env.APP_NAME }} ${{ env.APP_NAME }}
+            find /home/longplan/backend/develop/ -mindepth 1 ! -path "/home/longplan/backend/develop/config" ! -path "/home/longplan/backend/develop/config/config.dev.yaml" -delete
+            docker system prune -a -f
           EOF
 
     env:
