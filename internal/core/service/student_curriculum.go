@@ -122,10 +122,9 @@ func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculu
 
 	for _, answer := range studentCurriculum.Answers {
 		studentCurriculumQuestionAnswer := model.StudentCurriculumQuestionAnswer{
-			StudentCode:  studentCurriculum.StudentCode,
-			CurriculumID: studentCurriculum.CurriculumID,
-			QuestionID:   answer.QuestionID,
-			ChoiceID:     answer.ChoiceID,
+			StudentCurriculumID: studentCurriculumModel.ID,
+			QuestionID:          answer.QuestionID,
+			ChoiceID:            answer.ChoiceID,
 		}
 		if err := s.studentCurriculumQuestionAnswerRepo.Create(&studentCurriculumQuestionAnswer); err != nil {
 			return err
