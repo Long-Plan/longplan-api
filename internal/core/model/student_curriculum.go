@@ -8,7 +8,6 @@ type StudentCurriculum struct {
 	StudentCode  int       `gorm:"column:student_code;type:int;not null" json:"student_code"`
 	CurriculumID int       `gorm:"column:curriculum_id;type:int;not null" json:"curriculum_id"`
 	IsSystem     bool      `gorm:"column:is_system;type:bool;default:false;not null" json:"is_system"`
-	IsDefault    bool      `gorm:"column:is_default;type:bool;default:false;not null" json:"is_default"`
 	CreatedAt    time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt    time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

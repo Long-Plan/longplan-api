@@ -5,7 +5,6 @@ import (
 
 	"github.com/Long-Plan/longplan-api/internal/core/model"
 	"github.com/Long-Plan/longplan-api/internal/core/port"
-	"github.com/gofiber/fiber/v2/log"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +32,6 @@ func (r *studentRepo) Save(student *model.Student) error {
 			}
 			return err
 		}
-		log.Info(student)
 		return tx.Save(student).Error
 	})
 }

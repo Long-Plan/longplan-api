@@ -10,6 +10,7 @@ type SysCategory struct {
 	AtLeast      bool      `gorm:"column:at_least;type:boolean" json:"at_least"`
 	Credit       int       `gorm:"column:credit;type:int" json:"credit"`
 	TypeID       int       `gorm:"column:category_type_id;type:int" json:"type_id"`
+	IsDisplay    bool      `gorm:"column:is_display;type:boolean" json:"is_display"`
 	Note         string    `gorm:"column:note;type:text" json:"note"`
 	CreatedAt    time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt    time.Time `gorm:"autoUpdateTime" json:"updated_at"`

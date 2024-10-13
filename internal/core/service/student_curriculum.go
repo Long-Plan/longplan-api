@@ -112,7 +112,6 @@ func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculu
 		StudentCode:  studentCurriculum.StudentCode,
 		CurriculumID: studentCurriculum.CurriculumID,
 		IsSystem:     studentCurriculum.IsSystem,
-		IsDefault:    studentCurriculum.IsDefault,
 	}
 
 	err = s.studentCurriculumRepo.Create(&studentCurriculumModel)
