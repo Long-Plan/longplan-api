@@ -66,7 +66,8 @@ func (e *enrolledCourseService) GetEnrolledCoursesByStudentCode(studentCode int)
 		})
 
 		s.Find("table[cellspacing='1'][cellpadding='3'][width='60%'][border='0'][class='t'] tr[bgcolor='#FFFFFF']").Each(func(j int, row *goquery.Selection) {
-			courseNo := strings.TrimSpace(row.Find("td:first-child").Text())
+			// padding courseNo to 6 digits
+			courseNo := padLeft(strings.TrimSpace(row.Find("td:first-child").Text()), '0', 6)
 			credit := strings.TrimSpace(row.Find("td:nth-child(2)").Text())
 			grade := strings.TrimSpace(row.Find("td:nth-child(3)").Text())
 
@@ -124,4 +125,11 @@ func transformInput(input int) (string, error) {
 	}
 
 	return strconv.Itoa(resultInt), nil
+}
+
+func padLeft(input string, padChar rune, length int) string {
+	if len(input) >= length {
+		return input
+	}
+	return strings.Repeat(string(padChar), length-len(input)) + input
 }

@@ -21,6 +21,11 @@ func NewStudentCurriculumHandler(studentCurriculumService domain.StudentCurricul
 }
 
 func (h *studentCurriculumHandler) GetByStudentCode(c *fiber.Ctx) error {
+	majorId, err := c.ParamsInt("majorId", 0)
+	if err != nil {
+		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
+	}
+
 	studentCodeStr, ok := c.Locals("student_code").(string)
 	if !ok {
 		log.Println("student_code is not a string")
@@ -31,7 +36,7 @@ func (h *studentCurriculumHandler) GetByStudentCode(c *fiber.Ctx) error {
 		return lodash.ResponseBadRequest(c)
 	}
 
-	studentCurricula, err := h.studentCurriculumService.GetByStudentCode(studentCode)
+	studentCurricula, err := h.studentCurriculumService.GetByStudentCode(studentCode, majorId)
 	if err != nil {
 		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 	}

@@ -5,8 +5,8 @@ import "time"
 type SysCourseDetail struct {
 	ID           int64     `gorm:"primaryKey;autoIncrement" json:"id"`
 	CourseNo     string    `gorm:"column:course_no;type:varchar(6);unique;not null" json:"course_no"`
-	TitleLongTH  string    `gorm:"column:title_long_th;type:varchar(255);unique" json:"title_long_th"`
-	TitleLongEN  string    `gorm:"column:title_long_en;type:varchar(255);unique" json:"title_long_en"`
+	TitleLongTH  string    `gorm:"column:title_long_th;type:varchar(255)" json:"title_long_th"`
+	TitleLongEN  string    `gorm:"column:title_long_en;type:varchar(255)" json:"title_long_en"`
 	TitleShortEN *string   `gorm:"column:title_short_en;type:varchar(255)" json:"title_short_en,omitempty"`
 	CourseDescTH *string   `gorm:"column:course_desc_th;type:text" json:"course_desc_th,omitempty"`
 	CourseDescEN *string   `gorm:"column:course_desc_en;type:text" json:"course_desc_en,omitempty"`

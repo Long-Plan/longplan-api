@@ -6,7 +6,7 @@ import (
 )
 
 type StudentCurriculumService interface {
-	GetByStudentCode(studentCode int) ([]dto.StudentCurriculum, error)
+	GetByStudentCode(studentCode int, majorId int) ([]dto.StudentCurriculum, error)
 	GetByStudentCurriculumID(studentCurriculumID int) (*dto.StudentCurriculum, error)
 	Create(studentCurriculum dto.StudentCurriculumCreate) (*int, error)
 	Update(studentCurriculum model.StudentCurriculum) error
