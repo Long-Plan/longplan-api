@@ -16,5 +16,7 @@ func bindStudentRouter(router fiber.Router) {
 	studentRepo := repo.NewStudentRepo(infrastructure.DB)
 	studentService := service.NewStudentService(studentRepo)
 	hdl := handler.NewStudentHandler(studentService)
-	student.Put("", middlewares.AuthMiddleware(), hdl.Update)
+	student.Put("/major", middlewares.AuthMiddleware(), hdl.UpdateMajor)
+	student.Post("/term", middlewares.AuthMiddleware(), hdl.UpdateTerm)
+	student.Put("/curriculum", middlewares.AuthMiddleware(), hdl.UpdateCurriculum)
 }

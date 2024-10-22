@@ -6,7 +6,6 @@ type StudentCurriculum struct {
 	StudentCode  int    `json:"student_code"`
 	CurriculumID int    `json:"curriculum_id"`
 	IsSystem     bool   `json:"is_system"`
-	IsDefault    bool   `json:"is_default"`
 
 	Courses []StudentCurriculumCourse         `json:"courses"`
 	Answers []StudentCurriculumQuestionAnswer `json:"answers"`
@@ -17,7 +16,6 @@ type StudentCurriculumCreate struct {
 	StudentCode  int    `json:"student_code"`
 	CurriculumID int    `json:"curriculum_id"`
 	IsSystem     bool   `json:"is_system"`
-	IsDefault    bool   `json:"is_default"`
 
 	Answers []StudentCurriculumQuestionAnswer `json:"answers"`
 }

@@ -1,6 +1,9 @@
 package handler
 
 import (
+	"log"
+	"strconv"
+
 	"github.com/Long-Plan/longplan-api/internal/core/domain"
 	"github.com/Long-Plan/longplan-api/internal/core/dto"
 	"github.com/Long-Plan/longplan-api/internal/core/model"
@@ -18,9 +21,14 @@ func NewStudentCurriculumHandler(studentCurriculumService domain.StudentCurricul
 }
 
 func (h *studentCurriculumHandler) GetByStudentCode(c *fiber.Ctx) error {
-	studentCode, err := c.ParamsInt("studentCode", 0)
+	studentCodeStr, ok := c.Locals("student_code").(string)
+	if !ok {
+		log.Println("student_code is not a string")
+		return lodash.ResponseBadRequest(c)
+	}
+	studentCode, err := strconv.Atoi(studentCodeStr)
 	if err != nil {
-		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
+		return lodash.ResponseBadRequest(c)
 	}
 
 	studentCurricula, err := h.studentCurriculumService.GetByStudentCode(studentCode)
@@ -51,11 +59,12 @@ func (h *studentCurriculumHandler) Create(c *fiber.Ctx) error {
 		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
 	}
 
-	if err := h.studentCurriculumService.Create(studentCurriculum); err != nil {
+	studentCurriculumID, err := h.studentCurriculumService.Create(studentCurriculum)
+	if err != nil {
 		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 	}
 
-	return lodash.ResponseOK(c, studentCurriculum)
+	return lodash.ResponseOK(c, *studentCurriculumID)
 }
 
 func (h *studentCurriculumHandler) Update(c *fiber.Ctx) error {
@@ -108,7 +117,7 @@ func (h *studentCurriculumHandler) UpdateQuestionAnswers(c *fiber.Ctx) error {
 		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
 	}
 
-	var questions []model.StudentCurriculumQuestionAnswer
+	var questions []dto.StudentCurriculumQuestionAnswer
 	if err := c.BodyParser(&questions); err != nil {
 		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
 	}

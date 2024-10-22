@@ -5,10 +5,11 @@ import (
 	"github.com/Long-Plan/longplan-api/internal/adaptor/handler"
 	"github.com/Long-Plan/longplan-api/internal/adaptor/repo"
 	"github.com/Long-Plan/longplan-api/internal/core/service"
+	middlewares "github.com/Long-Plan/longplan-api/internal/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 
-const STUDENT_CURRICULUM_PREFIX = "/student_curricula"
+const STUDENT_CURRICULUM_PREFIX = "/student-curricula"
 
 func bindStudentCurriculumRouter(router fiber.Router) {
 	studentCurriculum := router.Group(STUDENT_CURRICULUM_PREFIX)
@@ -24,7 +25,7 @@ func bindStudentCurriculumRouter(router fiber.Router) {
 	)
 	hdl := handler.NewStudentCurriculumHandler(studentCurriculumService)
 
-	studentCurriculum.Get("/student/:studentCode", hdl.GetByStudentCode)
+	studentCurriculum.Get("/student", middlewares.AuthMiddleware(), hdl.GetByStudentCode)
 	studentCurriculum.Get("/:studentCurriculumID", hdl.GetByStudentCurriculumID)
 	studentCurriculum.Post("", hdl.Create)
 	studentCurriculum.Put("", hdl.Update)

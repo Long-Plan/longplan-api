@@ -7,15 +7,18 @@ import (
 )
 
 type Category struct {
-	ID        int       `json:"id"`
-	NameTH    string    `json:"name_th"`
-	NameEN    string    `json:"name_en"`
-	AtLeast   bool      `json:"at_least"`
-	Credit    int       `json:"credit"`
-	TypeID    int       `json:"type_id"`
-	Note      string    `json:"note"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID             int       `json:"id"`
+	NameTH         string    `json:"name_th"`
+	NameEN         string    `json:"name_en"`
+	AtLeast        *bool     `json:"at_least"`
+	Credit         *int      `json:"credit"`
+	TypeID         *int      `json:"type_id"`
+	IsDisplay      *bool     `json:"is_display"`
+	PrimaryColor   string    `json:"primary_color"`
+	SecondaryColor string    `json:"secondary_color"`
+	Note           string    `json:"note"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
 
 	Requirements    []CategoryRequirement  `json:"requirements"`
 	Relationships   []CategoryRelationship `json:"relationships"`

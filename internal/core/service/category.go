@@ -103,7 +103,7 @@ func (s *categoryService) GetByCurriculumID(curriculumID int) (*dto.Category, er
 	}
 
 	totalCategory, ok := lo.Find(sysCategories, func(cate model.SysCategory) bool {
-		return cate.TypeID == 7
+		return *cate.TypeID == 7
 	})
 
 	if !ok {
