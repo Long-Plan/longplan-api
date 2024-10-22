@@ -77,3 +77,34 @@ func (h studentHandler) UpdateMajor(c *fiber.Ctx) error {
 
 	return lodash.ResponseOK(c, student)
 }
+
+func (h studentHandler) UpdateCurriculum(c *fiber.Ctx) error {
+	studentCodeStr, ok := c.Locals("student_code").(string)
+	if !ok {
+		log.Println("student_code is not a string")
+		return lodash.ResponseBadRequest(c)
+	}
+	studentCode, err := strconv.Atoi(studentCodeStr)
+	if err != nil {
+		log.Println(err)
+		return lodash.ResponseBadRequest(c)
+	}
+
+	var StudentCurriculumUpdateDto dto.StudentCurriculumUpdateDto
+	if err := c.BodyParser(&StudentCurriculumUpdateDto); err != nil {
+		return lodash.ResponseError(c, errors.NewBadRequestError(err.Error()))
+	}
+
+	student, err := h.serv.GetByStudentCode(studentCode)
+	if err != nil {
+		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
+	}
+
+	student.StudentCurriculumID = &StudentCurriculumUpdateDto.StudentCurriculumID
+
+	if err := h.serv.Save(*student); err != nil {
+		return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
+	}
+
+	return lodash.ResponseOK(c, student)
+}

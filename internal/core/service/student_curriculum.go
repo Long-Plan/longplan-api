@@ -101,10 +101,10 @@ func (s *studentCurriculumService) GetByStudentCurriculumID(studentCurriculumID 
 	return studentCurriculumDto, nil
 }
 
-func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculumCreate) error {
+func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculumCreate) (*int, error) {
 	courses, err := s.sysCategoryCourseRepo.GetByCurriculumID(studentCurriculum.CurriculumID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	studentCurriculumModel := model.StudentCurriculum{
@@ -116,7 +116,7 @@ func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculu
 
 	err = s.studentCurriculumRepo.Create(&studentCurriculumModel)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	for _, answer := range studentCurriculum.Answers {
@@ -126,7 +126,7 @@ func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculu
 			ChoiceID:            answer.ChoiceID,
 		}
 		if err := s.studentCurriculumQuestionAnswerRepo.Create(&studentCurriculumQuestionAnswer); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
@@ -140,11 +140,11 @@ func (s *studentCurriculumService) Create(studentCurriculum dto.StudentCurriculu
 				CategoryID:          course.CategoryID,
 			}
 			if err := s.studentCurriculumCourseRepo.Create(&studentCurriculumCourse); err != nil {
-				return err
+				return nil, err
 			}
 		}
 	}
-	return nil
+	return &studentCurriculumModel.ID, nil
 }
 
 func (s *studentCurriculumService) Update(studentCurriculum model.StudentCurriculum) error {
@@ -159,6 +159,14 @@ func (s *studentCurriculumService) UpdateCourses(studentCurriculumID int, course
 	return s.studentCurriculumCourseRepo.Updates(courses)
 }
 
-func (s *studentCurriculumService) UpdateQuestionAnswers(studentCurriculumID int, questions []model.StudentCurriculumQuestionAnswer) error {
-	return s.studentCurriculumQuestionAnswerRepo.Updates(questions)
+func (s *studentCurriculumService) UpdateQuestionAnswers(studentCurriculumID int, questions []dto.StudentCurriculumQuestionAnswer) error {
+	answers, err := mapper.MapSlice[dto.StudentCurriculumQuestionAnswer, model.StudentCurriculumQuestionAnswer](questions)
+	if err != nil {
+		return err
+	}
+	for i, answer := range answers {
+		answer.StudentCurriculumID = studentCurriculumID
+		answers[i] = answer
+	}
+	return s.studentCurriculumQuestionAnswerRepo.Updates(answers)
 }

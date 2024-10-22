@@ -18,4 +18,5 @@ func bindStudentRouter(router fiber.Router) {
 	hdl := handler.NewStudentHandler(studentService)
 	student.Put("/major", middlewares.AuthMiddleware(), hdl.UpdateMajor)
 	student.Post("/term", middlewares.AuthMiddleware(), hdl.UpdateTerm)
+	student.Put("/curriculum", middlewares.AuthMiddleware(), hdl.UpdateCurriculum)
 }
