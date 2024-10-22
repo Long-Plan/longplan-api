@@ -29,8 +29,8 @@ func NewStudentCurriculumService(
 	}
 }
 
-func (s *studentCurriculumService) GetByStudentCode(studentCode int) ([]dto.StudentCurriculum, error) {
-	studentCurricula, err := s.studentCurriculumRepo.GetByStudentCode(studentCode)
+func (s *studentCurriculumService) GetByStudentCode(studentCode int, majorId int) ([]dto.StudentCurriculum, error) {
+	studentCurricula, err := s.studentCurriculumRepo.GetByStudentCode(studentCode, majorId)
 	if err != nil {
 		return nil, err
 	}

@@ -25,7 +25,7 @@ func bindStudentCurriculumRouter(router fiber.Router) {
 	)
 	hdl := handler.NewStudentCurriculumHandler(studentCurriculumService)
 
-	studentCurriculum.Get("/student", middlewares.AuthMiddleware(), hdl.GetByStudentCode)
+	studentCurriculum.Get("/student/:majorId", middlewares.AuthMiddleware(), hdl.GetByStudentCode)
 	studentCurriculum.Get("/:studentCurriculumID", hdl.GetByStudentCurriculumID)
 	studentCurriculum.Post("", hdl.Create)
 	studentCurriculum.Put("", hdl.Update)

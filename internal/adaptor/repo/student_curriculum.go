@@ -15,9 +15,19 @@ func NewStudentCurriculumRepo(db *gorm.DB) port.StudentCurriculumRepo {
 	return &studentCurriculumRepo{db}
 }
 
-func (r *studentCurriculumRepo) GetByStudentCode(studentCode int) ([]model.StudentCurriculum, error) {
+func (r *studentCurriculumRepo) GetByStudentCode(studentCode int, majorId int) ([]model.StudentCurriculum, error) {
+	var curricula []model.SysCurriculum
+	if err := r.db.Preload(clause.Associations).Where("major_id = ?", majorId).Find(&curricula).Error; err != nil {
+		return nil, err
+	}
+
+	curriculumIDs := make([]int, len(curricula))
+	for i, curriculum := range curricula {
+		curriculumIDs[i] = curriculum.ID
+	}
+
 	var studentCurriculums []model.StudentCurriculum
-	if err := r.db.Preload(clause.Associations).Where("student_code = ?", studentCode).Find(&studentCurriculums).Error; err != nil {
+	if err := r.db.Preload(clause.Associations).Where("student_code = ? AND curriculum_id IN ?", studentCode, curriculumIDs).Find(&studentCurriculums).Error; err != nil {
 		return nil, err
 	}
 	return studentCurriculums, nil
