@@ -63,10 +63,10 @@ func (h oauthHandler) SignIn(c *fiber.Ctx) error {
 			return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
 		}
 
-		student, err := h.studentService.GetByStudentCode(code)
-		if err != nil {
-			return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
-		}
+		student, _ := h.studentService.GetByStudentCode(code)
+		// if err != nil {
+		// 	return lodash.ResponseError(c, errors.NewInternalError(err.Error()))
+		// }
 
 		if student == nil {
 			studentModel := model.Student{
